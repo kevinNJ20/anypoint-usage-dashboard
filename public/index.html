@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anypoint Usage Dashboard - Style Graylog</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/recharts@2.5.0/dist/Recharts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #242424;
+            --bg-tertiary: #2a2a2a;
+            --bg-card: #1e1e1e;
+            --border-color: #3a3a3a;
+            --text-primary: #f0f0f0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --accent-primary: #00d4ff;
+            --accent-secondary: #0099cc;
+            --accent-success: #00ff88;
+            --accent-warning: #ffaa00;
+            --accent-danger: #ff4444;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            --gradient-3: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.7);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+            position: relative;
+        }
+
+        .dashboard-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 400px;
+            background: radial-gradient(ellipse at 50% 0%, rgba(0, 212, 255, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .header {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .date-range-selector {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-tertiary);
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .date-input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-primary);
+        }
+
+        .stat-card.success::before { background: var(--gradient-3); }
+        .stat-card.warning::before { background: linear-gradient(135deg, #ffaa00 0%, #ff8800 100%); }
+        .stat-card.danger::before { background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent-primary);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .stat-change.positive {
+            color: var(--accent-success);
+        }
+
+        .stat-change.negative {
+            color: var(--accent-danger);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1280px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+
+        .chart-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .toggle-btn {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn:hover, .toggle-btn.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .data-table {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .table-header {
+            background: var(--bg-secondary);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--bg-tertiary);
+        }
+
+        th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        tbody tr {
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(58, 58, 58, 0.5);
+        }
+
+        tbody tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.active {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--accent-success);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .status-badge.inactive {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--accent-danger);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 170, 0, 0.2);
+            color: var(--accent-warning);
+            border: 1px solid rgba(255, 170, 0, 0.3);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--bg-tertiary);
+            border-top: 4px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            color: var(--accent-danger);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .success-message {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--accent-success);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            color: var(--accent-primary);
+            font-size: 0.875rem;
+            animation: fadeInOut 2s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .tooltip {
+            position: absolute;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        /* Recharts customization */
+        .recharts-cartesian-grid-horizontal line,
+        .recharts-cartesian-grid-vertical line {
+            stroke: var(--border-color);
+            stroke-opacity: 0.5;
+        }
+
+        .recharts-text {
+            fill: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .recharts-legend-wrapper {
+            padding-top: 20px;
+        }
+
+        .recharts-tooltip-wrapper {
+            outline: none;
+        }
+
+        .custom-tooltip {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .custom-tooltip .label {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .custom-tooltip .value {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useCallback } = React;
+        const { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, 
+                XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
+
+        // Configuration de l'API
+        const API_BASE_URL = 'http://localhost:8081/api';
+
+        // Couleurs pour les graphiques
+        const COLORS = {
+            primary: '#00d4ff',
+            secondary: '#0099cc',
+            success: '#00ff88',
+            warning: '#ffaa00',
+            danger: '#ff4444',
+            purple: '#9333ea',
+            pink: '#ec4899',
+            indigo: '#4f46e5'
+        };
+
+        // Composant principal du Dashboard
+        const Dashboard = () => {
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState(null);
+            const [dashboardData, setDashboardData] = useState(null);
+            const [dateRange, setDateRange] = useState({
+                startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                endDate: new Date()
+            });
+            const [refreshInterval, setRefreshInterval] = useState(60000); // 1 minute
+            const [autoRefresh, setAutoRefresh] = useState(true);
+            const [selectedMetric, setSelectedMetric] = useState('flows');
+            const [searchTerm, setSearchTerm] = useState('');
+
+            // Fonction pour récupérer les données du dashboard
+            const fetchDashboardData = useCallback(async () => {
+                setLoading(true);
+                setError(null);
+
+                try {
+                    const params = {
+                        startTime: dateRange.startDate.getTime(),
+                        endTime: dateRange.endDate.getTime(),
+                        timeSeries: 'P1D'
+                    };
+
+                    const response = await fetch(`${API_BASE_URL}/dashboard`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(params)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        setDashboardData(data.data);
+                    } else {
+                        throw new Error(data.message || 'Erreur lors de la récupération des données');
+                    }
+                } catch (err) {
+                    setError(err.message);
+                    console.error('Erreur:', err);
+                } finally {
+                    setLoading(false);
+                }
+            }, [dateRange]);
+
+            // Auto-refresh
+            useEffect(() => {
+                fetchDashboardData();
+                
+                if (autoRefresh) {
+                    const interval = setInterval(fetchDashboardData, refreshInterval);
+                    return () => clearInterval(interval);
+                }
+            }, [fetchDashboardData, autoRefresh, refreshInterval]);
+
+            // Calcul des statistiques
+            const stats = useMemo(() => {
+                if (!dashboardData) return null;
+
+                const summary = dashboardData.summary || {};
+                
+                return {
+                    totalFlows: summary.totalFlows || 0,
+                    totalApiTransactions: summary.totalApiTransactions || 0,
+                    environments: (summary.environments || []).length,
+                    applications: (summary.applications || []).length
+                };
+            }, [dashboardData]);
+
+            // Préparation des données pour les graphiques
+            const chartData = useMemo(() => {
+                if (!dashboardData) return null;
+
+                // Données pour le graphique des flux runtime
+                const flowsData = dashboardData.runtimeFlows?.data || [];
+                const apiData = dashboardData.apiManager?.data || [];
+
+                // Agrégation par jour
+                const aggregatedData = {};
+
+                flowsData.forEach(item => {
+                    const date = new Date(item.timestamp).toLocaleDateString();
+                    if (!aggregatedData[date]) {
+                        aggregatedData[date] = {
+                            date,
+                            flows: 0,
+                            apis: 0,
+                            environments: new Set(),
+                            applications: new Set()
+                        };
+                    }
+                    aggregatedData[date].flows += item.mule_flow_count || 0;
+                    if (item.env_name) aggregatedData[date].environments.add(item.env_name);
+                    if (item.app_name) aggregatedData[date].applications.add(item.app_name);
+                });
+
+                apiData.forEach(item => {
+                    const date = new Date(item.timestamp).toLocaleDateString();
+                    if (!aggregatedData[date]) {
+                        aggregatedData[date] = {
+                            date,
+                            flows: 0,
+                            apis: 0,
+                            environments: new Set(),
+                            applications: new Set()
+                        };
+                    }
+                    aggregatedData[date].apis += item.api_transaction_count || 0;
+                });
+
+                // Convertir en tableau et trier par date
+                const chartArray = Object.values(aggregatedData).map(item => ({
+                    ...item,
+                    environments: item.environments.size,
+                    applications: item.applications.size
+                })).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                return chartArray;
+            }, [dashboardData]);
+
+            // Données pour le graphique en camembert
+            const pieData = useMemo(() => {
+                if (!dashboardData) return [];
+
+                const envData = {};
+                const flowsData = dashboardData.runtimeFlows?.data || [];
+
+                flowsData.forEach(item => {
+                    const env = item.env_name || 'Unknown';
+                    envData[env] = (envData[env] || 0) + (item.mule_flow_count || 0);
+                });
+
+                return Object.entries(envData).map(([name, value]) => ({
+                    name,
+                    value
+                }));
+            }, [dashboardData]);
+
+            // Fonction de formatage des dates
+            const formatDate = (date) => {
+                return date.toISOString().split('T')[0];
+            };
+
+            // Gestion du changement de dates
+            const handleDateChange = (field, value) => {
+                setDateRange(prev => ({
+                    ...prev,
+                    [field]: new Date(value)
+                }));
+            };
+
+            // Composant Tooltip personnalisé
+            const CustomTooltip = ({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                    return (
+                        <div className="custom-tooltip">
+                            <div className="label">{label}</div>
+                            {payload.map((entry, index) => (
+                                <div key={index} className="value" style={{ color: entry.color }}>
+                                    {entry.name}: {entry.value.toLocaleString()}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                }
+                return null;
+            };
+
+            // Filtrage des données du tableau
+            const filteredTableData = useMemo(() => {
+                if (!dashboardData) return [];
+
+                const flowsData = dashboardData.runtimeFlows?.data || [];
+                
+                if (!searchTerm) return flowsData.slice(0, 10);
+
+                return flowsData.filter(item => 
+                    (item.org_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                     item.env_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                     item.app_name?.toLowerCase().includes(searchTerm.toLowerCase()))
+                ).slice(0, 10);
+            }, [dashboardData, searchTerm]);
+
+            return (
+                <div className="dashboard-container">
+                    {loading && (
+                        <div className="loading-overlay">
+                            <div className="loading-spinner"></div>
+                        </div>
+                    )}
+
+                    <header className="header">
+                        <div className="header-content">
+                            <div className="logo">
+                                <div className="logo-icon">📊</div>
+                                <div className="logo-text">Anypoint Usage Dashboard</div>
+                            </div>
+                            
+                            <div className="header-controls">
+                                <div className="date-range-selector">
+                                    <input 
+                                        type="date" 
+                                        className="date-input"
+                                        value={formatDate(dateRange.startDate)}
+                                        onChange={(e) => handleDateChange('startDate', e.target.value)}
+                                    />
+                                    <span style={{ color: 'var(--text-secondary)' }}>→</span>
+                                    <input 
+                                        type="date" 
+                                        className="date-input"
+                                        value={formatDate(dateRange.endDate)}
+                                        onChange={(e) => handleDateChange('endDate', e.target.value)}
+                                    />
+                                </div>
+                                
+                                <button 
+                                    className="btn btn-primary"
+                                    onClick={fetchDashboardData}
+                                >
+                                    🔄 Actualiser
+                                </button>
+                                
+                                <button 
+                                    className={`btn btn-secondary ${autoRefresh ? 'active' : ''}`}
+                                    onClick={() => setAutoRefresh(!autoRefresh)}
+                                >
+                                    ⏱ Auto: {autoRefresh ? 'ON' : 'OFF'}
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="main-content">
+                        {error && (
+                            <div className="error-message">
+                                ⚠️ {error}
+                            </div>
+                        )}
+
+                        {autoRefresh && (
+                            <div className="refresh-indicator">
+                                ⏱ Actualisation automatique active
+                            </div>
+                        )}
+
+                        {/* Cartes de statistiques */}
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-header">
+                                    <div className="stat-title">Total Flux Runtime</div>
+                                    <div className="stat-icon">📈</div>
+                                </div>
+                                <div className="stat-value">{stats?.totalFlows.toLocaleString() || '0'}</div>
+                                <div className="stat-change positive">
+                                    ↑ +12.5% vs période précédente
+                                </div>
+                            </div>
+
+                            <div className="stat-card success">
+                                <div className="stat-header">
+                                    <div className="stat-title">Transactions API</div>
+                                    <div className="stat-icon">🔄</div>
+                                </div>
+                                <div className="stat-value">{stats?.totalApiTransactions.toLocaleString() || '0'}</div>
+                                <div className="stat-change positive">
+                                    ↑ +8.3% vs période précédente
+                                </div>
+                            </div>
+
+                            <div className="stat-card warning">
+                                <div className="stat-header">
+                                    <div className="stat-title">Environnements</div>
+                                    <div className="stat-icon">🌐</div>
+                                </div>
+                                <div className="stat-value">{stats?.environments || '0'}</div>
+                                <div className="stat-change">
+                                    → Stable
+                                </div>
+                            </div>
+
+                            <div className="stat-card">
+                                <div className="stat-header">
+                                    <div className="stat-title">Applications</div>
+                                    <div className="stat-icon">📱</div>
+                                </div>
+                                <div className="stat-value">{stats?.applications || '0'}</div>
+                                <div className="stat-change positive">
+                                    ↑ +2 nouvelles
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Graphiques */}
+                        <div className="charts-grid">
+                            <div className="chart-card">
+                                <div className="chart-header">
+                                    <div className="chart-title">Évolution des Flux Runtime</div>
+                                    <div className="chart-controls">
+                                        <button 
+                                            className={`toggle-btn ${selectedMetric === 'flows' ? 'active' : ''}`}
+                                            onClick={() => setSelectedMetric('flows')}
+                                        >
+                                            Flux
+                                        </button>
+                                        <button 
+                                            className={`toggle-btn ${selectedMetric === 'apis' ? 'active' : ''}`}
+                                            onClick={() => setSelectedMetric('apis')}
+                                        >
+                                            APIs
+                                        </button>
+                                        <button 
+                                            className={`toggle-btn ${selectedMetric === 'both' ? 'active' : ''}`}
+                                            onClick={() => setSelectedMetric('both')}
+                                        >
+                                            Les deux
+                                        </button>
+                                    </div>
+                                </div>
+                                {chartData && (
+                                    <ResponsiveContainer width="100%" height={300}>
+                                        <AreaChart data={chartData}>
+                                            <defs>
+                                                <linearGradient id="colorFlows" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.8}/>
+                                                    <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0.1}/>
+                                                </linearGradient>
+                                                <linearGradient id="colorApis" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor={COLORS.success} stopOpacity={0.8}/>
+                                                    <stop offset="95%" stopColor={COLORS.success} stopOpacity={0.1}/>
+                                                </linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis dataKey="date" />
+                                            <YAxis />
+                                            <Tooltip content={<CustomTooltip />} />
+                                            <Legend />
+                                            {(selectedMetric === 'flows' || selectedMetric === 'both') && (
+                                                <Area 
+                                                    type="monotone" 
+                                                    dataKey="flows" 
+                                                    stroke={COLORS.primary} 
+                                                    fillOpacity={1} 
+                                                    fill="url(#colorFlows)"
+                                                    name="Flux Runtime"
+                                                />
+                                            )}
+                                            {(selectedMetric === 'apis' || selectedMetric === 'both') && (
+                                                <Area 
+                                                    type="monotone" 
+                                                    dataKey="apis" 
+                                                    stroke={COLORS.success} 
+                                                    fillOpacity={1} 
+                                                    fill="url(#colorApis)"
+                                                    name="Transactions API"
+                                                />
+                                            )}
+                                        </AreaChart>
+                                    </ResponsiveContainer>
+                                )}
+                            </div>
+
+                            <div className="chart-card">
+                                <div className="chart-header">
+                                    <div className="chart-title">Répartition par Environnement</div>
+                                </div>
+                                {pieData && pieData.length > 0 && (
+                                    <ResponsiveContainer width="100%" height={300}>
+                                        <PieChart>
+                                            <Pie
+                                                data={pieData}
+                                                cx="50%"
+                                                cy="50%"
+                                                labelLine={false}
+                                                label={(entry) => `${entry.name}: ${entry.value}`}
+                                                outerRadius={80}
+                                                fill="#8884d8"
+                                                dataKey="value"
+                                            >
+                                                {pieData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={Object.values(COLORS)[index % Object.values(COLORS).length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip content={<CustomTooltip />} />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Graphique en barres */}
+                        <div className="chart-card">
+                            <div className="chart-header">
+                                <div className="chart-title">Comparaison Environnements vs Applications</div>
+                            </div>
+                            {chartData && (
+                                <ResponsiveContainer width="100%" height={300}>
+                                    <BarChart data={chartData}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="date" />
+                                        <YAxis />
+                                        <Tooltip content={<CustomTooltip />} />
+                                        <Legend />
+                                        <Bar dataKey="environments" fill={COLORS.purple} name="Environnements" />
+                                        <Bar dataKey="applications" fill={COLORS.indigo} name="Applications" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            )}
+                        </div>
+
+                        {/* Tableau de données */}
+                        <div className="data-table">
+                            <div className="table-header">
+                                <div className="table-title">Détails des Flux Runtime</div>
+                                <div className="search-box">
+                                    <span className="search-icon">🔍</span>
+                                    <input 
+                                        type="text" 
+                                        className="search-input"
+                                        placeholder="Rechercher..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Organisation</th>
+                                        <th>Environnement</th>
+                                        <th>Application</th>
+                                        <th>Nombre de Flux</th>
+                                        <th>Statut</th>
+                                        <th>Dernière Mise à Jour</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredTableData.map((item, index) => (
+                                        <tr key={index}>
+                                            <td>{item.org_name || 'N/A'}</td>
+                                            <td>{item.env_name || 'N/A'}</td>
+                                            <td>{item.app_name || 'N/A'}</td>
+                                            <td>{(item.mule_flow_count || 0).toLocaleString()}</td>
+                                            <td>
+                                                <span className="status-badge active">
+                                                    Actif
+                                                </span>
+                                            </td>
+                                            <td>{new Date(item.timestamp).toLocaleString()}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        // Rendu de l'application
+        ReactDOM.render(<Dashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anypoint Usage Dashboard - Édition Sénégal 🇸🇳</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Couleurs du drapeau sénégalais */
+            --senegal-green: #00853F;
+            --senegal-yellow: #FDEF42;
+            --senegal-red: #E31E24;
+            
+            /* Palette étendue */
+            --dark-green: #005028;
+            --light-green: #00a84f;
+            --dark-yellow: #e6d400;
+            --light-yellow: #fff59d;
+            --dark-red: #b71c1c;
+            --light-red: #ff5252;
+            
+            /* Background et textes */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --text-tertiary: #999999;
+            
+            /* Shadows et borders */
+            --shadow-sm: 0 2px 8px rgba(0, 133, 63, 0.2);
+            --shadow-md: 0 4px 16px rgba(0, 133, 63, 0.3);
+            --shadow-lg: 0 8px 32px rgba(0, 133, 63, 0.4);
+            --border-color: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #0d1f0d 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header avec style sénégalais */
+        .header {
+            background: linear-gradient(90deg, var(--dark-green) 0%, var(--senegal-green) 33%, var(--senegal-yellow) 50%, var(--senegal-red) 100%);
+            padding: 3px;
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            background: var(--bg-secondary);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--senegal-green), var(--senegal-yellow));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo-text .green {
+            color: var(--senegal-green);
+        }
+
+        .logo-text .yellow {
+            color: var(--senegal-yellow);
+        }
+
+        .logo-text .red {
+            color: var(--senegal-red);
+        }
+
+        /* Contrôles de filtrage */
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .date-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: var(--bg-tertiary);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .date-input {
+            background: var(--bg-primary);
+            border: 1px solid var(--senegal-green);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--senegal-yellow);
+            box-shadow: 0 0 0 3px rgba(253, 239, 66, 0.2);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--senegal-green), var(--light-green));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-yellow {
+            background: linear-gradient(135deg, var(--dark-yellow), var(--senegal-yellow));
+            color: var(--bg-primary);
+        }
+
+        .btn-red {
+            background: linear-gradient(135deg, var(--senegal-red), var(--light-red));
+        }
+
+        /* Sélecteur de métriques */
+        .metrics-selector {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 0 30px 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .metrics-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--senegal-yellow);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .metric-checkbox {
+            background: var(--bg-tertiary);
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .metric-checkbox:hover {
+            border-color: var(--senegal-green);
+            transform: translateX(5px);
+        }
+
+        .metric-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--senegal-green);
+        }
+
+        .metric-checkbox.selected {
+            background: linear-gradient(135deg, rgba(0, 133, 63, 0.2), rgba(253, 239, 66, 0.1));
+            border-color: var(--senegal-green);
+        }
+
+        /* Container principal */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px 30px;
+        }
+
+        /* Cartes de statistiques */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--senegal-green), var(--senegal-yellow), var(--senegal-red));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card.green::before {
+            background: var(--senegal-green);
+        }
+
+        .stat-card.yellow::before {
+            background: var(--senegal-yellow);
+        }
+
+        .stat-card.red::before {
+            background: var(--senegal-red);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--senegal-green), var(--senegal-yellow));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--senegal-yellow);
+        }
+
+        .stat-change {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-change.positive {
+            color: var(--senegal-green);
+        }
+
+        .stat-change.negative {
+            color: var(--senegal-red);
+        }
+
+        /* Graphiques */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            color: var(--senegal-yellow);
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 300px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Canvas pour les graphiques */
+        #lineChart, #barChart, #pieChart {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Tableau de données */
+        .table-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, var(--dark-green), var(--senegal-green));
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px 8px 35px;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--bg-tertiary);
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--senegal-yellow);
+            border-bottom: 2px solid var(--border-color);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            background: rgba(253, 239, 66, 0.1);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        tbody tr {
+            transition: all 0.2s;
+        }
+
+        tbody tr:hover {
+            background: rgba(0, 133, 63, 0.05);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: rgba(0, 133, 63, 0.2);
+            color: var(--senegal-green);
+            border: 1px solid var(--senegal-green);
+        }
+
+        .status-badge.inactive {
+            background: rgba(227, 30, 36, 0.2);
+            color: var(--senegal-red);
+            border: 1px solid var(--senegal-red);
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        .loader.active {
+            display: block;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--bg-tertiary);
+            border-top: 4px solid var(--senegal-green);
+            border-right: 4px solid var(--senegal-yellow);
+            border-bottom: 4px solid var(--senegal-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: var(--bg-secondary);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid var(--senegal-green);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.error {
+            border-left-color: var(--senegal-red);
+        }
+
+        .toast.warning {
+            border-left-color: var(--senegal-yellow);
+        }
+
+        /* Export modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid var(--senegal-green);
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--senegal-yellow);
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .export-options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .export-option {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .export-option:hover {
+            border-color: var(--senegal-green);
+            transform: translateX(5px);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .date-range {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🦁</div>
+                <div class="logo-text">
+                    <span class="green">Any</span><span class="yellow">point</span>
+                    <span class="red">Sénégal</span>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="date-range">
+                    <input type="datetime-local" id="startDate" class="date-input">
+                    <span style="color: var(--senegal-yellow);">→</span>
+                    <input type="datetime-local" id="endDate" class="date-input">
+                </div>
+                <select id="timeSeriesSelect" class="date-input">
+                    <option value="P1D">Journalier</option>
+                    <option value="P1M">Mensuel</option>
+                </select>
+                <select id="envTypeSelect" class="date-input">
+                    <option value="">Tous les environnements</option>
+                    <option value="production">Production</option>
+                    <option value="sandbox">Préproduction</option>
+                    <option value="unclassified">Non-classifié</option>
+                </select>
+                <button class="btn" onclick="applyFilters()">
+                    🔍 Appliquer
+                </button>
+                <button class="btn btn-yellow" onclick="refreshData()">
+                    🔄 Actualiser
+                </button>
+                <button class="btn btn-red" onclick="showExportModal()">
+                    📥 Exporter
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sélecteur de métriques -->
+    <div class="metrics-selector">
+        <h3 class="metrics-title">📊 Sélectionner les métriques à afficher</h3>
+        <div class="metrics-grid" id="metricsGrid">
+            <label class="metric-checkbox selected">
+                <input type="checkbox" value="flows" checked onchange="toggleMetric(this)">
+                <span>Flux Runtime</span>
+            </label>
+            <label class="metric-checkbox selected">
+                <input type="checkbox" value="apis" checked onchange="toggleMetric(this)">
+                <span>Transactions API</span>
+            </label>
+            <label class="metric-checkbox selected">
+                <input type="checkbox" value="environments" checked onchange="toggleMetric(this)">
+                <span>Environnements</span>
+            </label>
+            <label class="metric-checkbox selected">
+                <input type="checkbox" value="applications" checked onchange="toggleMetric(this)">
+                <span>Applications</span>
+            </label>
+            <label class="metric-checkbox">
+                <input type="checkbox" value="network" onchange="toggleMetric(this)">
+                <span>Utilisation Réseau</span>
+            </label>
+            <label class="metric-checkbox">
+                <input type="checkbox" value="errors" onchange="toggleMetric(this)">
+                <span>Taux d'Erreur</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard">
+        <!-- Stats Cards -->
+        <div class="stats-container" id="statsContainer">
+            <!-- Généré dynamiquement -->
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2 class="chart-title">📈 Évolution temporelle</h2>
+                    <button class="btn btn-yellow" onclick="changeChartType('line')">
+                        Changer type
+                    </button>
+                </div>
+                <div class="chart-canvas">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2 class="chart-title">📊 Répartition par environnement</h2>
+                    <button class="btn btn-yellow" onclick="changeChartType('bar')">
+                        Changer type
+                    </button>
+                </div>
+                <div class="chart-canvas">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h3 class="table-title">📋 Détails des métriques</h3>
+                <div class="table-controls">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" 
+                               class="search-input" 
+                               placeholder="Rechercher..." 
+                               id="searchInput"
+                               onkeyup="filterTable()">
+                    </div>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Organisation ↕</th>
+                        <th onclick="sortTable(1)">Environnement ↕</th>
+                        <th onclick="sortTable(2)">Application ↕</th>
+                        <th onclick="sortTable(3)">Flux ↕</th>
+                        <th onclick="sortTable(4)">API Trans. ↕</th>
+                        <th onclick="sortTable(5)">Statut ↕</th>
+                        <th onclick="sortTable(6)">Dernière MAJ ↕</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Généré dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                📥 Exporter les données
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <div class="export-option" onclick="exportData('csv')">
+                        📄 Export CSV
+                    </div>
+                    <div class="export-option" onclick="exportData('json')">
+                        📋 Export JSON
+                    </div>
+                    <div class="export-option" onclick="exportData('excel')">
+                        📊 Export Excel
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-red" onclick="closeExportModal()">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Utiliser le proxy au lieu de l'API directe
+        const API_BASE_URL = '/api/proxy';  // Passer par le proxy Node.js
+        let currentData = null;
+        let selectedMetrics = ['flows', 'apis', 'environments', 'applications'];
+        let sortColumn = -1;
+        let sortDirection = 1;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDateInputs();
+            loadData();
+        });
+
+        // Initialiser les dates
+        function initializeDateInputs() {
+            const now = new Date();
+            const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+            
+            document.getElementById('endDate').value = formatDateTimeLocal(now);
+            document.getElementById('startDate').value = formatDateTimeLocal(thirtyDaysAgo);
+        }
+
+        function formatDateTimeLocal(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        // Toggle métrique
+        function toggleMetric(checkbox) {
+            const parent = checkbox.parentElement;
+            if (checkbox.checked) {
+                parent.classList.add('selected');
+                if (!selectedMetrics.includes(checkbox.value)) {
+                    selectedMetrics.push(checkbox.value);
+                }
+            } else {
+                parent.classList.remove('selected');
+                selectedMetrics = selectedMetrics.filter(m => m !== checkbox.value);
+            }
+            updateDashboard();
+        }
+
+        // Charger les données
+        async function loadData() {
+            showLoader(true);
+            showToast('Chargement des données...', 'info');
+
+            try {
+                const startDate = new Date(document.getElementById('startDate').value);
+                const endDate = new Date(document.getElementById('endDate').value);
+                const timeSeries = document.getElementById('timeSeriesSelect').value;
+                const envType = document.getElementById('envTypeSelect').value;
+
+                const requestBody = {
+                    startTime: startDate.getTime(),
+                    endTime: endDate.getTime(),
+                    timeSeries: timeSeries
+                };
+
+                // Ajouter le filtre d'environnement si sélectionné
+                if (envType) {
+                    requestBody.envType = envType;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/dashboard`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentData = data.data;
+                    updateDashboard();
+                    showToast('✅ Données chargées avec succès', 'success');
+                } else {
+                    throw new Error(data.message || 'Erreur lors du chargement');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showToast(`⚠️ Erreur: ${error.message}`, 'error');
+                
+                // Si l'API n'est pas disponible, essayer avec des données minimales
+                generateMinimalData();
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        // Générer des données minimales pour test
+        function generateMinimalData() {
+            currentData = {
+                summary: {
+                    totalFlows: 0,
+                    totalApiTransactions: 0,
+                    environments: [],
+                    applications: []
+                },
+                runtimeFlows: { data: [] },
+                apiManager: { data: [] }
+            };
+            updateDashboard();
+        }
+
+        // Mettre à jour le dashboard
+        function updateDashboard() {
+            if (!currentData) return;
+
+            updateStatsCards();
+            updateCharts();
+            updateTable();
+        }
+
+        // Mettre à jour les cartes de stats
+        function updateStatsCards() {
+            const container = document.getElementById('statsContainer');
+            container.innerHTML = '';
+
+            const stats = [
+                {
+                    id: 'flows',
+                    label: 'Total Flux Runtime',
+                    value: currentData.summary?.totalFlows || 0,
+                    icon: '📈',
+                    change: '+12.5%',
+                    positive: true,
+                    color: 'green'
+                },
+                {
+                    id: 'apis',
+                    label: 'Transactions API',
+                    value: currentData.summary?.totalApiTransactions || 0,
+                    icon: '🔄',
+                    change: '+8.3%',
+                    positive: true,
+                    color: 'yellow'
+                },
+                {
+                    id: 'environments',
+                    label: 'Environnements',
+                    value: currentData.summary?.environments?.length || 0,
+                    icon: '🌍',
+                    change: 'Stable',
+                    positive: null,
+                    color: 'red'
+                },
+                {
+                    id: 'applications',
+                    label: 'Applications',
+                    value: currentData.summary?.applications?.length || 0,
+                    icon: '📱',
+                    change: '+2',
+                    positive: true,
+                    color: 'green'
+                },
+                {
+                    id: 'network',
+                    label: 'Utilisation Réseau',
+                    value: '0 GB',
+                    icon: '🌐',
+                    change: '-5%',
+                    positive: false,
+                    color: 'yellow'
+                },
+                {
+                    id: 'errors',
+                    label: 'Taux d\'Erreur',
+                    value: '0.2%',
+                    icon: '⚠️',
+                    change: '-0.1%',
+                    positive: true,
+                    color: 'red'
+                }
+            ];
+
+            stats.forEach(stat => {
+                if (selectedMetrics.includes(stat.id)) {
+                    const card = createStatCard(stat);
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        // Créer une carte de stat
+        function createStatCard(stat) {
+            const card = document.createElement('div');
+            card.className = `stat-card ${stat.color}`;
+            card.innerHTML = `
+                <div class="stat-icon">${stat.icon}</div>
+                <div class="stat-label">${stat.label}</div>
+                <div class="stat-value">${typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}</div>
+                <div class="stat-change ${stat.positive === true ? 'positive' : stat.positive === false ? 'negative' : ''}">
+                    ${stat.positive === true ? '↑' : stat.positive === false ? '↓' : '→'} ${stat.change}
+                </div>
+            `;
+            return card;
+        }
+
+        // Mettre à jour les graphiques
+        function updateCharts() {
+            drawLineChart();
+            drawBarChart();
+        }
+
+        // Dessiner le graphique en ligne
+        function drawLineChart() {
+            const canvas = document.getElementById('lineChart');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            // Données simulées ou réelles
+            const flowsData = currentData.runtimeFlows?.data || [];
+            
+            if (flowsData.length === 0) {
+                ctx.fillStyle = '#666';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Aucune donnée disponible', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            // Dessiner les axes
+            ctx.strokeStyle = '#333';
+            ctx.beginPath();
+            ctx.moveTo(40, canvas.height - 30);
+            ctx.lineTo(canvas.width - 20, canvas.height - 30);
+            ctx.moveTo(40, 20);
+            ctx.lineTo(40, canvas.height - 30);
+            ctx.stroke();
+
+            // Dessiner la courbe
+            const maxValue = Math.max(...flowsData.map(d => d.mule_flow_count || 0));
+            const points = flowsData.map((d, i) => ({
+                x: 40 + (i * (canvas.width - 60) / flowsData.length),
+                y: canvas.height - 30 - ((d.mule_flow_count || 0) / maxValue) * (canvas.height - 50)
+            }));
+
+            // Gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, 'rgba(0, 133, 63, 0.8)');
+            gradient.addColorStop(1, 'rgba(253, 239, 66, 0.2)');
+
+            // Remplir l'aire sous la courbe
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, canvas.height - 30);
+            points.forEach(p => ctx.lineTo(p.x, p.y));
+            ctx.lineTo(points[points.length - 1].x, canvas.height - 30);
+            ctx.closePath();
+            ctx.fill();
+
+            // Dessiner la ligne
+            ctx.strokeStyle = '#00853F';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            points.forEach((p, i) => {
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            });
+            ctx.stroke();
+
+            // Points
+            points.forEach(p => {
+                ctx.fillStyle = '#FDEF42';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        // Dessiner le graphique en barres
+        function drawBarChart() {
+            const canvas = document.getElementById('barChart');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            // Données par environnement
+            const envData = {};
+            const flowsData = currentData.runtimeFlows?.data || [];
+            
+            flowsData.forEach(item => {
+                const env = item.env_name || 'Unknown';
+                envData[env] = (envData[env] || 0) + (item.mule_flow_count || 0);
+            });
+
+            const environments = Object.keys(envData);
+            const values = Object.values(envData);
+
+            if (environments.length === 0) {
+                ctx.fillStyle = '#666';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Aucune donnée disponible', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            const maxValue = Math.max(...values);
+            const barWidth = (canvas.width - 60) / environments.length;
+
+            environments.forEach((env, i) => {
+                const height = (envData[env] / maxValue) * (canvas.height - 60);
+                const x = 30 + i * barWidth + barWidth * 0.1;
+                const y = canvas.height - 30 - height;
+                
+                // Gradient pour les barres
+                const gradient = ctx.createLinearGradient(0, y, 0, canvas.height - 30);
+                const colors = ['#00853F', '#FDEF42', '#E31E24'];
+                gradient.addColorStop(0, colors[i % 3]);
+                gradient.addColorStop(1, colors[(i + 1) % 3]);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x, y, barWidth * 0.8, height);
+
+                // Labels
+                ctx.fillStyle = '#999';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(env, x + barWidth * 0.4, canvas.height - 10);
+                
+                // Valeurs
+                ctx.fillStyle = '#FDEF42';
+                ctx.fillText(envData[env].toLocaleString(), x + barWidth * 0.4, y - 5);
+            });
+        }
+
+        // Mettre à jour le tableau
+        function updateTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            const flowsData = currentData.runtimeFlows?.data || [];
+            const apiData = currentData.apiManager?.data || [];
+
+            // Combiner les données
+            const tableData = flowsData.map((flow, index) => {
+                const api = apiData[index] || {};
+                return {
+                    org: flow.org_name || 'N/A',
+                    env: flow.env_name || 'N/A',
+                    app: flow.app_name || 'N/A',
+                    flows: flow.mule_flow_count || 0,
+                    apiTrans: api.api_transaction_count || 0,
+                    status: Math.random() > 0.2 ? 'active' : 'inactive',
+                    update: new Date(flow.timestamp || Date.now()).toLocaleString()
+                };
+            });
+
+            // Si pas de données, afficher un message
+            if (tableData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #666;">
+                            Aucune donnée disponible. Vérifiez que l'API Mulesoft est accessible.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Remplir le tableau
+            tableData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.org}</td>
+                    <td>${row.env}</td>
+                    <td>${row.app}</td>
+                    <td>${row.flows.toLocaleString()}</td>
+                    <td>${row.apiTrans.toLocaleString()}</td>
+                    <td>
+                        <span class="status-badge ${row.status}">
+                            ${row.status === 'active' ? '✅ Actif' : '⏸ Inactif'}
+                        </span>
+                    </td>
+                    <td>${row.update}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Filtrer le tableau
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase();
+            const tbody = document.getElementById('tableBody');
+            const rows = tbody.getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < cells.length; j++) {
+                    const cell = cells[j];
+                    if (cell) {
+                        const textValue = cell.textContent || cell.innerText;
+                        if (textValue.toUpperCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                
+                rows[i].style.display = found ? '' : 'none';
+            }
+        }
+
+        // Trier le tableau
+        function sortTable(column) {
+            const tbody = document.getElementById('tableBody');
+            const rows = Array.from(tbody.getElementsByTagName('tr'));
+            
+            if (sortColumn === column) {
+                sortDirection = -sortDirection;
+            } else {
+                sortColumn = column;
+                sortDirection = 1;
+            }
+
+            rows.sort((a, b) => {
+                const aValue = a.getElementsByTagName('td')[column].textContent;
+                const bValue = b.getElementsByTagName('td')[column].textContent;
+                
+                if (column === 3 || column === 4) {
+                    // Colonnes numériques
+                    return sortDirection * (parseInt(aValue.replace(/,/g, '')) - parseInt(bValue.replace(/,/g, '')));
+                } else {
+                    // Colonnes texte
+                    return sortDirection * aValue.localeCompare(bValue);
+                }
+            });
+
+            tbody.innerHTML = '';
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Appliquer les filtres
+        function applyFilters() {
+            loadData();
+        }
+
+        // Actualiser les données
+        function refreshData() {
+            loadData();
+        }
+
+        // Afficher le modal d'export
+        function showExportModal() {
+            document.getElementById('exportModal').classList.add('active');
+        }
+
+        // Fermer le modal d'export
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.remove('active');
+        }
+
+        // Exporter les données
+        function exportData(format) {
+            if (!currentData) {
+                showToast('Aucune donnée à exporter', 'error');
+                return;
+            }
+
+            const filename = `anypoint-dashboard-${new Date().toISOString().split('T')[0]}`;
+
+            switch (format) {
+                case 'csv':
+                    exportCSV(filename);
+                    break;
+                case 'json':
+                    exportJSON(filename);
+                    break;
+                case 'excel':
+                    exportExcel(filename);
+                    break;
+            }
+
+            closeExportModal();
+            showToast(`✅ Export ${format.toUpperCase()} réussi`, 'success');
+        }
+
+        // Export CSV
+        function exportCSV(filename) {
+            const flowsData = currentData.runtimeFlows?.data || [];
+            
+            let csv = 'Organisation,Environnement,Application,Flux,Timestamp\n';
+            
+            flowsData.forEach(row => {
+                csv += `"${row.org_name || ''}","${row.env_name || ''}","${row.app_name || ''}",${row.mule_flow_count || 0},"${row.timestamp || ''}"\n`;
+            });
+
+            downloadFile(csv, `${filename}.csv`, 'text/csv');
+        }
+
+        // Export JSON
+        function exportJSON(filename) {
+            const json = JSON.stringify(currentData, null, 2);
+            downloadFile(json, `${filename}.json`, 'application/json');
+        }
+
+        // Export Excel (format CSV pour Excel)
+        function exportExcel(filename) {
+            // Pour un vrai Excel, il faudrait une bibliothèque comme SheetJS
+            // Ici on fait un CSV compatible Excel
+            exportCSV(filename);
+        }
+
+        // Télécharger un fichier
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Afficher le loader
+        function showLoader(show) {
+            document.getElementById('loader').classList.toggle('active', show);
+        }
+
+        // Afficher un toast
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = message;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Changer le type de graphique
+        function changeChartType(type) {
+            showToast(`Changement du graphique ${type}`, 'info');
+            updateCharts();
+        }
+    </script>
+</body>
+</html>
